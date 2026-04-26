@@ -1,21 +1,22 @@
-const API = "https://vercel-backend-1-elwp.onrender.com/";
+const API = "http://localhost:5000/api/books";
+let editId = null;
 
-// LOAD BOOKS
+// Load Books
 async function getBooks() {
-  try {
-    const res = await fetch(API);
-    const data = await res.json();
-    display(data);
-  } catch (err) {
-    alert("Error loading books");
-    console.error(err);
-  }
+  const res = await fetch(API);
+  const data = await res.json();
+  display(data);
 }
 
-// DISPLAY
+// Display
 function display(books) {
   const list = document.getElementById("list");
   list.innerHTML = "";
+
+  if (books.length === 0) {
+    list.innerHTML = `<tr><td colspan="4">No books found 📭</td></tr>`;
+    return;
+  }
 
   books.forEach(book => {
     list.innerHTML += `
@@ -23,55 +24,65 @@ function display(books) {
         <td>${book.title}</td>
         <td>${book.author}</td>
         <td>${book.year}</td>
+        <td>
+          <button onclick="editBook('${book._id}','${book.title}','${book.author}','${book.year}')">Edit</button>
+          <button onclick="deleteBook('${book._id}')">Delete</button>
+        </td>
       </tr>
     `;
   });
 }
 
-// ADD BOOK
-document.getElementById("bookForm").addEventListener("submit", async function(e) {
+// Add / Update
+document.getElementById("bookForm").addEventListener("submit", async e => {
   e.preventDefault();
 
-  const title = document.getElementById("title").value;
-  const author = document.getElementById("author").value;
-  const year = document.getElementById("year").value;
+  const book = {
+    title: title.value,
+    author: author.value,
+    year: year.value
+  };
 
-  try {
-    const res = await fetch(API, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ title, author, year })
+  if (editId) {
+    await fetch(API + "/" + editId, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(book)
     });
-
-    const data = await res.json();
-
-    console.log("Added:", data);
-    alert("Book added successfully!");
-
-    this.reset();
-    getBooks();
-
-  } catch (err) {
-    alert("Error adding book");
-    console.error(err);
+    editId = null;
+  } else {
+    await fetch(API, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(book)
+    });
   }
+
+  e.target.reset();
+  getBooks();
 });
 
-// SEARCH
-async function searchBooks() {
-  const q = document.getElementById("searchInput").value;
-
-  try {
-    const res = await fetch(API + "/search?q=" + q);
-    const data = await res.json();
-    display(data);
-  } catch (err) {
-    alert("Search error");
-    console.error(err);
-  }
+// Edit
+function editBook(id, t, a, y) {
+  title.value = t;
+  author.value = a;
+  year.value = y;
+  editId = id;
 }
 
-// INIT
+// Delete
+async function deleteBook(id) {
+  await fetch(API + "/" + id, { method: "DELETE" });
+  getBooks();
+}
+
+// Search
+async function searchBooks() {
+  const q = document.getElementById("searchInput").value;
+  const res = await fetch(API + "/search?q=" + q);
+  const data = await res.json();
+  display(data);
+}
+
+// Init
 getBooks();
