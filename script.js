@@ -1,4 +1,4 @@
-const API = "http://localhost:5000/api/books"; // change if deployed
+const API = "https://vercel-backend-7ikx.onrender.com/api/books";
 
 let editId = null;
 
@@ -98,5 +98,5 @@ async function searchBooks() {
   }
 }
 
-// INIT
+// LOAD
 getBooks();
