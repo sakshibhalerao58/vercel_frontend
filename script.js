@@ -1,15 +1,15 @@
-const API = "https://vercel-backend-7ikx.onrender.com/api/books";
+const API = "https://vercel-backend-1-elwp.onrender.com/api/books";
 
 let editId = null;
 
-// GET BOOKS
+// GET
 async function getBooks() {
   try {
     const res = await fetch(API);
     const data = await res.json();
     display(data);
   } catch (err) {
-    console.error("Fetch Error:", err);
+    console.error("Fetch error:", err);
   }
 }
 
@@ -43,9 +43,9 @@ document.getElementById("bookForm").addEventListener("submit", async e => {
   e.preventDefault();
 
   const book = {
-    title: document.getElementById("title").value,
-    author: document.getElementById("author").value,
-    year: document.getElementById("year").value
+    title: title.value,
+    author: author.value,
+    year: year.value
   };
 
   try {
@@ -67,7 +67,7 @@ document.getElementById("bookForm").addEventListener("submit", async e => {
     e.target.reset();
     getBooks();
   } catch (err) {
-    console.error("Add Error:", err);
+    console.error("Add error:", err);
   }
 });
 
@@ -79,9 +79,9 @@ async function deleteBook(id) {
 
 // EDIT
 function editBook(id, t, a, y) {
-  document.getElementById("title").value = t;
-  document.getElementById("author").value = a;
-  document.getElementById("year").value = y;
+  title.value = t;
+  author.value = a;
+  year.value = y;
   editId = id;
 }
 
@@ -94,9 +94,9 @@ async function searchBooks() {
     const data = await res.json();
     display(data);
   } catch (err) {
-    console.error("Search Error:", err);
+    console.error("Search error:", err);
   }
 }
 
-// LOAD
+// INIT
 getBooks();
