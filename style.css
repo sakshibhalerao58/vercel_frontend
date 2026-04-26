@@ -1,97 +1,66 @@
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: 'Segoe UI';
-}
-
 body {
-  background: linear-gradient(135deg, #667eea, #764ba2);
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.app {
-  width: 90%;
-  max-width: 900px;
+  font-family: Arial;
+  background: #f4f4f4;
   text-align: center;
 }
 
 h1 {
+  background: #333;
   color: white;
-  margin-bottom: 20px;
-}
-
-/* Glass Card */
-.card, .table-card {
-  background: rgba(255,255,255,0.1);
-  backdrop-filter: blur(10px);
-  padding: 15px;
-  margin-bottom: 15px;
-  border-radius: 15px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-}
-
-/* Inputs */
-input {
   padding: 10px;
+}
+
+.container {
+  width: 80%;
+  margin: auto;
+}
+
+form {
+  margin: 20px 0;
+}
+
+input {
+  padding: 8px;
   margin: 5px;
-  border: none;
-  border-radius: 8px;
-  outline: none;
 }
 
-/* Buttons */
 button {
-  padding: 10px 15px;
-  border: none;
-  border-radius: 8px;
-  background: #ff7a18;
+  padding: 8px 12px;
+  background: #333;
   color: white;
+  border: none;
   cursor: pointer;
-  transition: 0.3s;
 }
 
-button:hover {
-  transform: scale(1.05);
-}
-
-button.reset {
-  background: #555;
-}
-
-/* Table */
 table {
   width: 100%;
   border-collapse: collapse;
-  color: white;
+  background: white;
 }
 
-th {
-  background: rgba(255,255,255,0.2);
+th, td {
+  border: 1px solid #ddd;
+  padding: 10px;
 }
 
-td, th {
-  padding: 12px;
-  text-align: center;
-}
-
-tr:hover {
-  background: rgba(255,255,255,0.1);
-}
-
-/* Action buttons */
-td button {
-  margin: 2px;
-  font-size: 12px;
-}
-
-td button:nth-child(1) {
+button.edit {
   background: orange;
 }
 
-td button:nth-child(2) {
+button.delete {
   background: red;
+}
+
+/* Search UI */
+.search-box {
+  margin: 15px 0;
+}
+
+.search-box input {
+  padding: 8px;
+  width: 250px;
+}
+
+.search-box button {
+  margin-left: 5px;
 }

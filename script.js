@@ -1,88 +1,107 @@
-const API = "http://localhost:5000/api/books";
-let editId = null;
+let books = JSON.parse(localStorage.getItem("books")) || [];
+let editIndex = -1;
 
-// Load Books
-async function getBooks() {
-  const res = await fetch(API);
-  const data = await res.json();
-  display(data);
-}
+const form = document.getElementById("bookForm");
+const bookList = document.getElementById("bookList");
 
-// Display
-function display(books) {
-  const list = document.getElementById("list");
-  list.innerHTML = "";
+// DISPLAY ALL BOOKS (READ)
+function displayBooks() {
+  bookList.innerHTML = "";
 
-  if (books.length === 0) {
-    list.innerHTML = `<tr><td colspan="4">No books found 📭</td></tr>`;
-    return;
-  }
-
-  books.forEach(book => {
-    list.innerHTML += `
+  books.forEach((book, index) => {
+    bookList.innerHTML += `
       <tr>
         <td>${book.title}</td>
         <td>${book.author}</td>
         <td>${book.year}</td>
         <td>
-          <button onclick="editBook('${book._id}','${book.title}','${book.author}','${book.year}')">Edit</button>
-          <button onclick="deleteBook('${book._id}')">Delete</button>
+          <button class="edit" onclick="editBook(${index})">Edit</button>
+          <button class="delete" onclick="deleteBook(${index})">Delete</button>
         </td>
+      </tr>
+    `;
+  });
+
+  localStorage.setItem("books", JSON.stringify(books));
+}
+
+// ADD / UPDATE BOOK (CREATE + UPDATE)
+form.addEventListener("submit", function(e) {
+  e.preventDefault();
+
+  const title = document.getElementById("title").value;
+  const author = document.getElementById("author").value;
+  const year = document.getElementById("year").value;
+
+  const book = { title, author, year };
+
+  if (editIndex === -1) {
+    books.push(book); // CREATE
+  } else {
+    books[editIndex] = book; // UPDATE
+    editIndex = -1;
+  }
+
+  form.reset();
+  displayBooks();
+});
+
+// EDIT
+function editBook(index) {
+  const book = books[index];
+
+  document.getElementById("title").value = book.title;
+  document.getElementById("author").value = book.author;
+  document.getElementById("year").value = book.year;
+
+  editIndex = index;
+}
+
+// DELETE
+function deleteBook(index) {
+  books.splice(index, 1);
+  displayBooks();
+}
+
+// SEARCH (Button Trigger)
+function searchBooks() {
+  const keyword = document.getElementById("searchInput").value.toLowerCase();
+
+  const filtered = books.filter(book =>
+    book.title.toLowerCase().includes(keyword) ||
+    book.author.toLowerCase().includes(keyword) ||
+    book.year.toString().includes(keyword)
+  );
+
+  displayFilteredBooks(filtered);
+}
+
+// DISPLAY FILTERED RESULTS
+function displayFilteredBooks(filteredBooks) {
+  bookList.innerHTML = "";
+
+  if (filteredBooks.length === 0) {
+    bookList.innerHTML = `<tr><td colspan="4">No books found</td></tr>`;
+    return;
+  }
+
+  filteredBooks.forEach((book) => {
+    bookList.innerHTML += `
+      <tr>
+        <td>${book.title}</td>
+        <td>${book.author}</td>
+        <td>${book.year}</td>
+        <td>-</td>
       </tr>
     `;
   });
 }
 
-// Add / Update
-document.getElementById("bookForm").addEventListener("submit", async e => {
-  e.preventDefault();
-
-  const book = {
-    title: title.value,
-    author: author.value,
-    year: year.value
-  };
-
-  if (editId) {
-    await fetch(API + "/" + editId, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(book)
-    });
-    editId = null;
-  } else {
-    await fetch(API, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(book)
-    });
-  }
-
-  e.target.reset();
-  getBooks();
-});
-
-// Edit
-function editBook(id, t, a, y) {
-  title.value = t;
-  author.value = a;
-  year.value = y;
-  editId = id;
+// RESET SEARCH
+function resetSearch() {
+  document.getElementById("searchInput").value = "";
+  displayBooks();
 }
 
-// Delete
-async function deleteBook(id) {
-  await fetch(API + "/" + id, { method: "DELETE" });
-  getBooks();
-}
-
-// Search
-async function searchBooks() {
-  const q = document.getElementById("searchInput").value;
-  const res = await fetch(API + "/search?q=" + q);
-  const data = await res.json();
-  display(data);
-}
-
-// Init
-getBooks();
+// INITIAL LOAD
+displayBooks();

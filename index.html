@@ -2,46 +2,42 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Smart Library</title>
+  <title>Smart Library Manager</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<div class="app">
+<h1>📚 Smart Library Manager</h1>
 
-  <h1>📚 Smart Library</h1>
+<div class="container">
 
-  <!-- Form Card -->
-  <div class="card">
-    <form id="bookForm">
-      <input id="title" placeholder="Book Title" required>
-      <input id="author" placeholder="Author" required>
-      <input id="year" type="number" placeholder="Year" required>
-      <button>Add Book</button>
-    </form>
-  </div>
+  <!-- Form -->
+  <form id="bookForm">
+    <input type="text" id="title" placeholder="Book Title" required>
+    <input type="text" id="author" placeholder="Author" required>
+    <input type="number" id="year" placeholder="Year" required>
+    <button type="submit">Add Book</button>
+  </form>
 
   <!-- Search -->
-  <div class="search-box card">
-    <input id="searchInput" placeholder="🔍 Search books...">
+  <div class="search-box">
+    <input type="text" id="searchInput" placeholder="Search by title, author or year">
     <button onclick="searchBooks()">Search</button>
-    <button class="reset" onclick="getBooks()">Reset</button>
+    <button onclick="resetSearch()">Reset</button>
   </div>
 
   <!-- Table -->
-  <div class="table-card">
-    <table>
-      <thead>
-        <tr>
-          <th>Title</th>
-          <th>Author</th>
-          <th>Year</th>
-          <th>Action</th>
-        </tr>
-      </thead>
-      <tbody id="list"></tbody>
-    </table>
-  </div>
+  <table>
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>Author</th>
+        <th>Year</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody id="bookList"></tbody>
+  </table>
 
 </div>
 
