@@ -1,20 +1,25 @@
-const API = "http://localhost:5000/api/books";
+const API = "http://localhost:5000/api/books"; // change if deployed
+
 let editId = null;
 
-// Load Books
+// GET BOOKS
 async function getBooks() {
-  const res = await fetch(API);
-  const data = await res.json();
-  display(data);
+  try {
+    const res = await fetch(API);
+    const data = await res.json();
+    display(data);
+  } catch (err) {
+    console.error("Fetch Error:", err);
+  }
 }
 
-// Display
+// DISPLAY
 function display(books) {
   const list = document.getElementById("list");
   list.innerHTML = "";
 
-  if (books.length === 0) {
-    list.innerHTML = `<tr><td colspan="4">No books found 📭</td></tr>`;
+  if (!books || books.length === 0) {
+    list.innerHTML = `<tr><td colspan="4">No books found</td></tr>`;
     return;
   }
 
@@ -33,56 +38,65 @@ function display(books) {
   });
 }
 
-// Add / Update
+// ADD / UPDATE
 document.getElementById("bookForm").addEventListener("submit", async e => {
   e.preventDefault();
 
   const book = {
-    title: title.value,
-    author: author.value,
-    year: year.value
+    title: document.getElementById("title").value,
+    author: document.getElementById("author").value,
+    year: document.getElementById("year").value
   };
 
-  if (editId) {
-    await fetch(API + "/" + editId, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(book)
-    });
-    editId = null;
-  } else {
-    await fetch(API, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(book)
-    });
-  }
+  try {
+    if (editId) {
+      await fetch(API + "/" + editId, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(book)
+      });
+      editId = null;
+    } else {
+      await fetch(API, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(book)
+      });
+    }
 
-  e.target.reset();
-  getBooks();
+    e.target.reset();
+    getBooks();
+  } catch (err) {
+    console.error("Add Error:", err);
+  }
 });
 
-// Edit
-function editBook(id, t, a, y) {
-  title.value = t;
-  author.value = a;
-  year.value = y;
-  editId = id;
-}
-
-// Delete
+// DELETE
 async function deleteBook(id) {
   await fetch(API + "/" + id, { method: "DELETE" });
   getBooks();
 }
 
-// Search
-async function searchBooks() {
-  const q = document.getElementById("searchInput").value;
-  const res = await fetch(API + "/search?q=" + q);
-  const data = await res.json();
-  display(data);
+// EDIT
+function editBook(id, t, a, y) {
+  document.getElementById("title").value = t;
+  document.getElementById("author").value = a;
+  document.getElementById("year").value = y;
+  editId = id;
 }
 
-// Init
+// SEARCH
+async function searchBooks() {
+  const q = document.getElementById("searchInput").value;
+
+  try {
+    const res = await fetch(API + "/search?q=" + q);
+    const data = await res.json();
+    display(data);
+  } catch (err) {
+    console.error("Search Error:", err);
+  }
+}
+
+// INIT
 getBooks();
